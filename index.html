@@ -28,7 +28,7 @@ function setup() {
 }
 
 function draw() {
-  if (label === 'Car') {
+  if (label === '자동차') {
     background(255, 0, 0); // 붉은색 배경
     if (!alertSound.isPlaying()) {
       alertSound.play();
@@ -44,11 +44,6 @@ function draw() {
   textSize(32);
   textAlign(CENTER, CENTER);
   text(label, width / 2, height / 2);
-
-  // Draw "V2" at the top of the screen
-  textAlign(LEFT, TOP);
-  textSize(24);
-  text("V2", 10, 10);
 }
 
 // The model recognizing a sound will trigger this event
