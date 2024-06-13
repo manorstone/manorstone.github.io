@@ -5,7 +5,7 @@
 <script type="text/javascript">
   // Global variable to store the classifier and sound
 let classifier;
-let alertSound;
+///let alertSound;
 
 // Label
 let label = 'listening...';
@@ -17,7 +17,7 @@ function preload() {
   // Load the model
   classifier = ml5.soundClassifier(soundModel + 'model.json');
   // Load the alert sound
-  alertSound = loadSound('alert.mp3'); // 경고음 파일 경로
+  ///alertSound = loadSound('alert.mp3'); // 경고음 파일 경로
 }
 
 function setup() {
@@ -30,13 +30,13 @@ function setup() {
 function draw() {
   if (label === '자동차') {
     background(255, 0, 0); // 붉은색 배경
-    if (!alertSound.isPlaying()) {
-      alertSound.play();
-    }
+    ///if (!alertSound.isPlaying()) {
+      ///alertSound.play();
+    ///}
   } else {
     background(0);
-    if (alertSound.isPlaying()) {
-      alertSound.stop();
+    ///if (alertSound.isPlaying()) {
+      ///alertSound.stop();
     }
   }
   // Draw the label in the canvas
