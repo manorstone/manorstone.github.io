@@ -5,11 +5,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script>
 
 <script type="text/javascript">
-    // more documentation available at
-    // https://github.com/tensorflow/tfjs-models/tree/master/speech-commands
-
     // the link to your model provided by Teachable Machine export panel
     const URL = "https://teachablemachine.withgoogle.com/models/FlKBD1Va3/";
+    const alertSound = new Audio('alert.mp3'); // 경고음 파일 경로
 
     async function createModel() {
         const checkpointURL = URL + "model.json"; // model topology
@@ -19,7 +17,8 @@
             "BROWSER_FFT", // fourier transform type, not useful to change
             undefined, // speech commands vocabulary feature, not useful for your models
             checkpointURL,
-            metadataURL);
+            metadataURL
+        );
 
         // check that model and metadata are loaded via HTTPS requests.
         await recognizer.ensureModelLoaded();
@@ -35,15 +34,22 @@
             labelContainer.appendChild(document.createElement("div"));
         }
 
-        // listen() takes two arguments:
-        // 1. A callback function that is invoked anytime a word is recognized.
-        // 2. A configuration object with adjustable fields
         recognizer.listen(result => {
             const scores = result.scores; // probability of prediction for each class
             // render the probability scores per class
             for (let i = 0; i < classLabels.length; i++) {
                 const classPrediction = classLabels[i] + ": " + result.scores[i].toFixed(2);
                 labelContainer.childNodes[i].innerHTML = classPrediction;
+
+                // Check if the class is '자동차' and the probability is above 0.75
+                if (classLabels[i] === '자동차' && result.scores[i] >= 0.75) {
+                    if (!alertSound.isPlaying) {
+                        alertSound.play();
+                        alertSound.isPlaying = true;
+                    }
+                } else {
+                    alertSound.isPlaying = false;
+                }
             }
         }, {
             includeSpectrogram: true, // in case listen should return result.spectrogram
@@ -55,4 +61,9 @@
         // Stop the recognition in 5 seconds.
         // setTimeout(() => recognizer.stopListening(), 5000);
     }
+
+    // Handle the end of the alert sound
+    alertSound.addEventListener('ended', () => {
+        alertSound.isPlaying = false;
+    });
 </script>
