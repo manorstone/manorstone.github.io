@@ -1,4 +1,4 @@
-<div>Teachable Machine Audio Model V3</div>
+<div>Teachable Machine Audio Model V3.1</div>
 <div id="label-container"></div>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script>
@@ -41,13 +41,13 @@
                 const classPrediction = classLabels[i] + ": " + result.scores[i].toFixed(2);
                 labelContainer.childNodes[i].innerHTML = classPrediction;
 
-                // Check if the class is '자동차' and the probability is above 0.80
-                if (classLabels[i] === '자동차' && result.scores[i] >= 0.80) {
+                // Check if the class is '자동차' and the probability is above 0.75
+                if (classLabels[i] === '자동차' && result.scores[i] >= 0.75) {
                     if (!isPlaying) {
                         alertSound.play();
                         isPlaying = true;
                     }
-                } else if (classLabels[i] === '자동차' && result.scores[i] < 0.80 && isPlaying) {
+                } else if (classLabels[i] === '자동차' && result.scores[i] < 0.75 && isPlaying) {
                     alertSound.pause();
                     alertSound.currentTime = 0;
                     isPlaying = false;
@@ -55,9 +55,9 @@
             }
         }, {
             includeSpectrogram: true, // in case listen should return result.spectrogram
-            probabilityThreshold: 0.80,
+            probabilityThreshold: 0.75,
             invokeCallbackOnNoiseAndUnknown: true,
-            overlapFactor: 0.75 // probably want between 0.5 and 0.75. More info in README
+            overlapFactor: 0.80 // probably want between 0.5 and 0.75. More info in README
         });
 
         // Stop the recognition in 5 seconds.
