@@ -1,4 +1,4 @@
-<div>Teachable Machine Audio Model V4.5</div>
+<div>Teachable Machine Audio Model V4</div>
 <div id="label-container"></div>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script>
@@ -6,7 +6,7 @@
 <script type="text/javascript">
     // the link to your model provided by Teachable Machine export panel
     const URL = "https://teachablemachine.withgoogle.com/models/FlKBD1Va3/";
-    const alertSound = new Audio('alert2.mp3'); // 경고음 파일 경로
+    const alertSound = new Audio('alert.mp3'); // 경고음 파일 경로
     let isPlaying = false;
     const timeWindow = 3000; // 3초
     const threshold = 0.75;
