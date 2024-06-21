@@ -1,4 +1,4 @@
-<div>Teachable Machine Audio Model V4</div>
+<div>Teachable Machine Audio Model V3</div>
 <div id="label-container"></div>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script>
@@ -55,7 +55,8 @@
                     // Filter out timestamps older than the time window
                     timestampsAboveThreshold = timestampsAboveThreshold.filter(timestamp => currentTime - timestamp <= timeWindow);
 
-                    const timeAboveThreshold = timestampsAboveThreshold.length * (recognizer.params().overlapFactor / 1000);
+                    const timeAboveThreshold = (timestampsAboveThreshold.length > 1) ? 
+                        (timestampsAboveThreshold[timestampsAboveThreshold.length - 1] - timestampsAboveThreshold[0]) : 0;
 
                     if (result.scores[i] >= threshold && timeAboveThreshold <= maxTimeAboveThreshold) {
                         if (!isPlaying) {
@@ -69,7 +70,7 @@
             includeSpectrogram: true, // in case listen should return result.spectrogram
             probabilityThreshold: 0.75,
             invokeCallbackOnNoiseAndUnknown: true,
-            overlapFactor: 0.70 // probably want between 0.5 and 0.75. More info in README
+            overlapFactor: 0.80 // probably want between 0.5 and 0.75. More info in README
         });
 
         // Handle the end of the alert sound
