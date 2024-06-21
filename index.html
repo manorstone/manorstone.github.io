@@ -1,4 +1,4 @@
-<div>Teachable Machine Audio Model V3</div>
+<div>Teachable Machine Audio Model V4</div>
 <div id="label-container"></div>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script>
@@ -8,6 +8,10 @@
     const URL = "https://teachablemachine.withgoogle.com/models/FlKBD1Va3/";
     const alertSound = new Audio('alert.mp3'); // 경고음 파일 경로
     let isPlaying = false;
+    const timeWindow = 3000; // 3초
+    const threshold = 0.75;
+    const maxTimeAboveThreshold = 1000; // 1초
+    let timestampsAboveThreshold = [];
 
     async function createModel() {
         const checkpointURL = URL + "model.json"; // model topology
@@ -36,21 +40,29 @@
 
         recognizer.listen(result => {
             const scores = result.scores; // probability of prediction for each class
+            const currentTime = Date.now();
+
             // render the probability scores per class
             for (let i = 0; i < classLabels.length; i++) {
                 const classPrediction = classLabels[i] + ": " + result.scores[i].toFixed(2);
                 labelContainer.childNodes[i].innerHTML = classPrediction;
 
-                // Check if the class is '자동차' and the probability is above 0.75
-                if (classLabels[i] === '자동차' && result.scores[i] >= 0.75) {
-                    if (!isPlaying) {
-                        alertSound.play();
-                        isPlaying = true;
+                if (classLabels[i] === '자동차') {
+                    if (result.scores[i] >= threshold) {
+                        timestampsAboveThreshold.push(currentTime);
                     }
-                } else if (classLabels[i] === '자동차' && result.scores[i] < 0.75 && isPlaying) {
-                    alertSound.pause();
-                    alertSound.currentTime = 0;
-                    isPlaying = false;
+
+                    // Filter out timestamps older than the time window
+                    timestampsAboveThreshold = timestampsAboveThreshold.filter(timestamp => currentTime - timestamp <= timeWindow);
+
+                    const timeAboveThreshold = timestampsAboveThreshold.length * (recognizer.params().overlapFactor / 1000);
+
+                    if (result.scores[i] >= threshold && timeAboveThreshold <= maxTimeAboveThreshold) {
+                        if (!isPlaying) {
+                            alertSound.play();
+                            isPlaying = true;
+                        }
+                    }
                 }
             }
         }, {
@@ -60,15 +72,12 @@
             overlapFactor: 0.80 // probably want between 0.5 and 0.75. More info in README
         });
 
-        // Stop the recognition in 5 seconds.
-        // setTimeout(() => recognizer.stopListening(), 5000);
+        // Handle the end of the alert sound
+        alertSound.addEventListener('ended', () => {
+            isPlaying = false;
+        });
     }
 
-    // Handle the end of the alert sound
-    alertSound.addEventListener('ended', () => {
-        isPlaying = false;
-    });
-
-    // Automatically start the model when the page loads
-    window.addEventListener('load', init);
+    init();
 </script>
+
