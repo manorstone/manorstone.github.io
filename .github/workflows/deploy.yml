@@ -20,7 +20,7 @@ jobs:
       - name: Node.js 설정
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '20'
 
       - name: 의존성 설치
         run: npm install
